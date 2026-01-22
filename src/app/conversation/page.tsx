@@ -35,7 +35,7 @@ export default function Page() {
     };
   }, [messages]);
 
-  //TODO: Checkout why the conversation page is not rendering the messages
+  //TODO: Checkout why the conversation page is not rendering the messages.
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
