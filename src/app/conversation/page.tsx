@@ -1,0 +1,68 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Message from "@/components/Message";
+import { pusherClient } from "@/lib/pusher";
+import { sendMessage } from "@/actions/message.action";
+
+export default function Page() {
+  const [messages, setMessages] = useState<string[]>([]);
+  const [message, setMessage] = useState<string>("");
+
+  const handleSend = async () => {
+    // setMessages((prev) => [...prev, message]);
+    // setMessage("");
+    console.log("button clicked, sending message", message);
+    await sendMessage(message);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
+
+  useEffect(() => {
+    pusherClient.subscribe("chat-app");
+    pusherClient.bind("upcoming-message", (data: { message: string }) => {
+      setMessages((prev) => [...prev, data.message]);
+      console.log(messages);
+    });
+
+    return () => {
+      pusherClient.unbind("upcoming-message");
+      pusherClient.disconnect();
+    };
+  }, [messages]);
+
+  //TODO: Checkout why the conversation page is not rendering the messages.
+
+  return (
+    <div className="w-full min-h-screen flex items-center justify-center">
+      <div className="w-[40vw] min-h-[80vh] border border-white">
+        <div className="w-full py-2 flex items-center justify-center border border-gray-50">
+          <h1>Conversation</h1>
+        </div>
+        <div className="w-full h-110 border border-white">
+          {!messages.length ? (
+            <h1>No Messages Yet</h1>
+          ) : (
+            messages.map((message, index) => (
+              <Message key={index} message={message} />
+            ))
+          )}
+        </div>
+        <div className="w-full flex flex-col gap-2 items-center justify-center">
+          <Input
+            type="text"
+            placeholder="Enter your message here..."
+            onChange={handleInputChange}
+          />
+          <Button className="w-full" size={"lg"} onClick={handleSend}>
+            Send
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
