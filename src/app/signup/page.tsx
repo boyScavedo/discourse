@@ -27,7 +27,7 @@ function page() {
             Enter your name, email and password below to create your account
           </CardDescription>
           <CardAction>
-            <Button variant="link">
+            <Button variant="link" asChild>
               <Link href={"/login"}>Log in</Link>
             </Button>
           </CardAction>
@@ -56,12 +56,6 @@ function page() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
                 </div>
                 <Input
                   id="password"
@@ -75,7 +69,7 @@ function page() {
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button type="submit" className="w-full">
-            <Link href={"/"}>Register</Link>
+            Register
           </Button>
         </CardFooter>
       </Card>
