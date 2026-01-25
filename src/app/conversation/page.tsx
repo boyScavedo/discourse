@@ -14,26 +14,41 @@ export default function Page() {
   const handleSend = async () => {
     // setMessages((prev) => [...prev, message]);
     // setMessage("");
-    console.log("button clicked, sending message", message);
-    await sendMessage(message);
+
+    if (!message) return;
+
+    try {
+      await sendMessage(message);
+      setMessage("");
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
 
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
+
   useEffect(() => {
-    pusherClient.subscribe("chat-app");
-    pusherClient.bind("upcoming-message", (data: { message: string }) => {
+    const handleIncoming = (data: { message: string }) => {
       setMessages((prev) => [...prev, data.message]);
-      console.log(messages);
-    });
+    };
+
+    pusherClient.subscribe("chat-app");
+    pusherClient.bind("upcoming-message", handleIncoming);
 
     return () => {
-      pusherClient.unbind("upcoming-message");
+      pusherClient.unbind("upcoming-message", handleIncoming);
+      pusherClient.unsubscribe("chat-app");
       pusherClient.disconnect();
     };
-  }, [messages]);
+  }, []);
 
   //TODO: Checkout why the conversation page is not rendering the messages.
 
@@ -57,8 +72,13 @@ export default function Page() {
             type="text"
             placeholder="Enter your message here..."
             onChange={handleInputChange}
+            onKeyDown={handleEnterPress}
           />
-          <Button className="w-full" size={"lg"} onClick={handleSend}>
+          <Button
+            className="w-full hover:cursor-pointer"
+            size={"lg"}
+            onClick={handleSend}
+          >
             Send
           </Button>
         </div>

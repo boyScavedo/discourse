@@ -22,7 +22,7 @@ function page() {
             Enter your email below to login to your account
           </CardDescription>
           <CardAction>
-            <Button variant="link">
+            <Button variant="link" asChild>
               <Link href={"/signup"}>Sign Up</Link>
             </Button>
           </CardAction>
@@ -55,10 +55,10 @@ function page() {
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
+          <Button className="w-full" asChild>
             <Link href={"/"}>Login</Link>
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" asChild>
             <Link href={"/"}>Login with Google</Link>
           </Button>
         </CardFooter>
